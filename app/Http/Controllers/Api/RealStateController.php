@@ -40,6 +40,7 @@ class RealStateController extends Controller
                 ],
                 200
             );
+
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 401);
         }
@@ -54,7 +55,27 @@ class RealStateController extends Controller
 
     public function update(Request $request, $id)
     {
-        return response()->json($id);
+        // return response()->json($id);
+
+        $data =$request->all();
+
+        try {
+
+            $realState = $this->realState->findOrFail($id);
+            $realState->update($data);
+
+            return response()->json(
+                [
+                    'data' => [
+                        'msg' => 'Imóvel atualizado com sucesso!',
+                    ]
+                ],
+                200
+            );
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 401);
+        }
     }
 
 

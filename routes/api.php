@@ -28,6 +28,8 @@ Route::prefix('v1')->namespace('Api')->group(function(){
 
         Route::post('/',[RealStateController::class, 'store']); //api/v1/real-states/
 
+        Route::put('/{id}',[RealStateController::class, 'update']); //api/v1/real-states/{id}
+
 
     });
 
