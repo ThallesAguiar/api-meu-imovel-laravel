@@ -54,7 +54,7 @@ class RealStateController extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+        return response()->json($id);
     }
 
 
