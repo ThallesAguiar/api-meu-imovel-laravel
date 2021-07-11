@@ -40,4 +40,9 @@ class RealState extends Model
          * ex.: Real_state e Category, ele procura por category_real_state, mas minha tabela é real_state_category.
          */
     }
+
+    public function photos()
+    {
+        return $this->hasMany(RealStatePhoto::class);
+    }
 }

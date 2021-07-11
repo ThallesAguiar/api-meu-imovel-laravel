@@ -20,7 +20,11 @@ class RealStateController extends Controller
 
     public function index()
     {
-        $realState =  $this->realState->paginate(10);
+        /**
+         * auth('api')->user();
+         * vai pegar o usuario logado através do token.
+         */
+        $realState =  auth('api')->user()->real_state()->paginate(10);
 
         return response()->json($realState, 200);
     }
@@ -29,10 +33,9 @@ class RealStateController extends Controller
     public function store(RealStateRequest $request)
     {
         $data = $request->all();
-        // return response()->json($data);
 
         try {
-
+            $data['user_id'] = auth('api')->user()->id;
             $realState = $this->realState->create($data); // Mass Asignment:  inserção de dados em massa. Precisa do $fillable do model
 
             if (isset($data['categories']) && count($data['categories'])) {
@@ -59,7 +62,7 @@ class RealStateController extends Controller
     public function show($id)
     {
         try {
-            $realState = $this->realState->findOrFail($id);
+            $realState = auth('api')->user()->real_state()->findOrFail($id);
 
             return response()->json(
                 [
@@ -82,7 +85,7 @@ class RealStateController extends Controller
 
         try {
 
-            $realState = $this->realState->findOrFail($id);
+            $realState = auth('api')->user()->real_state()->findOrFail($id);
             $realState->update($data);
 
             if (isset($data['categories']) && count($data['categories'])) {
@@ -110,7 +113,7 @@ class RealStateController extends Controller
     {
 
         try {
-            $realState = $this->realState->findOrFail($id);
+            $realState = auth('api')->user()->real_state()->findOrFail($id);
             $realState->delete($realState);
 
             return response()->json(

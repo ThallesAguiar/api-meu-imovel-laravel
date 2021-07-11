@@ -28,9 +28,9 @@ class UserController extends Controller
             return response()->json($erro->getMessage(), 401, ['Accept' => 'application/json']);
         }
 
-        Validator::make($data,[
-            'phone'=>'required',
-            'mobile_phone'=>'required',
+        Validator::make($data, [
+            'phone' => 'required',
+            'mobile_phone' => 'required',
         ]);
 
         try {
@@ -41,8 +41,8 @@ class UserController extends Controller
             // referencia
             $user->profile()->create(
                 [
-                    'phone'=>$data['phone'],
-                    'mobile_phone'=>$data['mobile_phone']
+                    'phone' => $data['phone'],
+                    'mobile_phone' => $data['mobile_phone']
                 ]
             );
 
@@ -57,7 +57,8 @@ class UserController extends Controller
     public function show($id)
     {
         try {
-            $user = User::findOrFail($id);
+            $user = User::with('profile')->findOrFail($id);
+            $user->profile->social_networks = unserialize($user->profile->social_networks);
 
             return response()->json($user);
         } catch (\Exception $e) {
@@ -73,13 +74,23 @@ class UserController extends Controller
 
         if ($request->has('password') && $request->get('password')) {
             $data['password'] = bcrypt($data['password']);
-        }else{
+        } else {
             unset($data['password']);
         }
 
+        Validator::make($data, [
+            'profile.phone' => 'required',
+            'profile.mobile_phone' => 'required',
+        ]);
+
         try {
+            $profile = $data['profile'];
+            $profile['social_networks'] = serialize($profile['social_networks']);
+
             $user = User::findOrFail($id);
             $user->update($data);
+
+            $user->profile()->update($profile);
 
             return response()->json(['success' => 'User updated']);
         } catch (\Exception $e) {
